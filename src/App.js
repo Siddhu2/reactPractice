@@ -9,7 +9,7 @@ function App() {
       let temp=0;
       for(let i=0;i<data.length;i++)
       {
-        temp= parseInt(data[i].total) + temp;
+        temp= parseFloat(data[i].total) + temp;
       }
       return temp
     })
@@ -19,7 +19,7 @@ function App() {
   {
     let data = [...item]
     data[index][event.target.name] = event.target.value
-    data[index]['total']=data[index]['quantity']*data[index]['amount']
+    data[index]['total']=(data[index]['quantity']*data[index]['amount']).toFixed(2)
     setItem(data)
   }
 
@@ -31,17 +31,17 @@ function App() {
     setItem(data)
   }
 
-  const inputTags= item.map((input,index) =>{
-    return(
-      <div key={index}>
-        <input name="iname" placeholder='item name' value={input.iname} onChange={event => handleChange(index,event)}></input>
-        <input name="quantity" placeholder='quantity' value={input.quantity} onChange={event => handleChange(index,event)}></input>
-        <input name="amount" placeholder='amount' value={input.amount} onChange={event => handleChange(index,event)}></input>
-        <input name="total" placeholder='total' value={input.total} readOnly></input>
-        <button key={index} onClick={() => removeEntry(index)}>Remove</button>
-      </div>
-    )
-  })
+  // const inputTags= item.map((input,index) =>{
+  //   return(
+  //     <div key={index}>
+  //       <input name="iname" placeholder='item name' value={input.iname} onChange={event => handleChange(index,event)}></input>
+  //       <input name="quantity" type="number" pattern="^\d*(\.\d{0,2})?$" step=".01" placeholder='quantity' value={input.quantity} onChange={event => handleChange(index,event)}></input>
+  //       <input name="amount" type="number" pattern="[0-9]*" step=".01" min=".01" max="99999.99" placeholder='amount' value={input.amount} onChange={event => handleChange(index,event)}></input>
+  //       <input name="total" placeholder='total' value={input.total} readOnly></input>
+  //       <button key={index} onClick={() => removeEntry(index)}>Remove</button>
+  //     </div>
+  //   )
+  // })
   function addItem()
   {
     const newItem={quantity:"",amount:"",total:0}
@@ -55,12 +55,32 @@ function App() {
       return newArray
     })
   }
+
+  function handleSubmit(event)
+  {
+    event.preventDefault();
+    alert(JSON.stringify(item));
+  }
+
   return (
+    <form onSubmit={handleSubmit}>
     <div className="App">
-     {inputTags}
-     <button onClick={addItem}>Add+</button>
+    {item.map((input,index) =>(
+       <div key={index}>
+       <input name="iname" placeholder='item name' value={input.iname} onChange={event => handleChange(index,event)}></input>
+       <input name="quantity" type="number" pattern="[0-9]*" step=".001" min=".000" max="999.999" placeholder='quantity' value={input.quantity} onChange={event => handleChange(index,event)}></input>
+       <input name="amount" type="number" pattern="[0-9]*" step=".01" min=".01" max="99999.99" placeholder='amount' value={input.amount} onChange={event => handleChange(index,event)}></input>
+       <input name="total" placeholder='total' value={input.total} readOnly></input>
+       <button key={index} onClick={() => removeEntry(index)}>Remove</button>
+     </div>
+    ))}
+     
+     <button type='button' onClick={addItem}>Add+</button>
      <h3>Total amount: {billTotal ? billTotal : 0}</h3>
+     <button type='submit'>submit</button>
+     
     </div>
+    </form>
   );
 }
 
